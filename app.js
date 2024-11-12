@@ -20,11 +20,16 @@ app.get('/confirm', (req, res) => {
 });
 
 app.post('/submit', (req, res) => {
-    let newPost = {
+    
+    const newPost = {
         author: req.body.author,
         title: req.body.title,
         content: req.body.content
     };
+
+    posts.push(newPost);
+
+    res.render('confirmation', { post: newPost });
 });
 
 app.get('/posts' , (req,res) => {
