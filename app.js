@@ -7,17 +7,18 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static('public'));
 
-let posts = [];
 
 app.set('view engine', 'ejs');
 
+// The Home page, where the user enters in their post
 app.get('/', (req, res) => {
-
-});
-
-app.get('/confirm', (req, res) => {
+    console.log("Homepage - server!");
     
+    res.render('home');
 });
+
+// The Submission page
+const posts = [];
 
 app.post('/submit', (req, res) => {
     
@@ -33,7 +34,7 @@ app.post('/submit', (req, res) => {
 });
 
 app.get('/posts' , (req,res) => {
-    res.render('posts', { data : posts });
+    res.render('posts', { data: posts });
 });
 
 app.listen(PORT, () => {
