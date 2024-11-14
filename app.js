@@ -32,6 +32,10 @@ app.post('/submit', (req, res) => {
     res.render('confirmation', { post: newPost });
 });
 
+app.get('/entries' , (req, res) => {
+    res.render('entries', { data: posts });
+});
+
 app.get('/posts' , (req,res) => {
     res.render('posts', { data: posts });
 });
