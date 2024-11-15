@@ -17,14 +17,15 @@ app.get('/', (req, res) => {
 });
 
 // The Submission page
-const posts = [];
+let posts = [];
 
 app.post('/submit', (req, res) => {
     
     const newPost = {
         author: req.body.author,
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        timestamp: new Date(Date.now()),
     };
 
     posts.push(newPost);
@@ -32,11 +33,8 @@ app.post('/submit', (req, res) => {
     res.render('confirmation', { post: newPost });
 });
 
-app.get('/entries' , (req, res) => {
-    res.render('entries', { data: posts });
-});
 
-app.post('/entries' , (req, res) => {
+app.get('/entries' , (req, res) => {
     res.render('entries', { data: posts });
 });
 
