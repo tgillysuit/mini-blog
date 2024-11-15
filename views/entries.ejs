@@ -9,7 +9,7 @@
 <body>
     <h1>All Posts</h1>
     <% if (data.length > 0) { %>
-        <% for (let i = 0; i < posts.length; i++) { %>
+        <% for (let i = 0; i < data.length; i++) { %>
             <div>
                 <h2><%= data[i].title %></h2>
                 <p>Author: <%= data[i].author %></p>

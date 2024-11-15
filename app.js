@@ -36,6 +36,10 @@ app.get('/entries' , (req, res) => {
     res.render('entries', { data: posts });
 });
 
+app.post('/entries' , (req, res) => {
+    res.render('entries', { data: posts });
+});
+
 app.get('/posts' , (req,res) => {
     res.render('posts', { data: posts });
 });
