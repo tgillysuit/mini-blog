@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Entries</title>
+</head>
+<body>
+    <h1>All Posts</h1>
+    <% if (data.length > 0) { %>
+        <% for (let i = 0; i < data.length; i++) { %>
+            <% if(data[i].author === "Admin") { %>
+            <div>
+                <h2><%= data[i].title %></h2>
+                <p>Author: <%= data[i].author %></p>
+                <p><%= data[i].content %></p>
+                <!-- Timestamp will go here -->
+                 <p><%= data[i].timestamp.toString() %></p>
+            </div>
+            <hr>
+            <% } %>
+        <% } %>
+    <% } else { %>
+        <p>No posts found.</p>
+    <% } %>
+</body>
+</html>
