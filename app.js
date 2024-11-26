@@ -34,23 +34,19 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-// The Submission page
-let posts = [];
-
-app.post('/submit', (req, res) => {
+app.post('/submit', async (req, res) => {
     
-    const newPost = {
-        author: req.body.author,
-        title: req.body.title,
-        content: req.body.content,
-        timestamp: new Date(Date.now()),
-    };
+    const data = req.body;
+    console.log(data);
 
-    posts.push(newPost);
+    const conn = await connect();
 
-    res.render('confirmation', { post: newPost });
+    await conn.query(`INSERT INTO posts (author, title, content)
+    VALUES ('${data.author}','${data.title}','${data.content}');
+    `);
+
+    res.render('confirmation', { details: data });
 });
-
 
 app.get('/entries' , (req, res) => {
     res.render('entries', { data: posts });
