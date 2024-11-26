@@ -9,6 +9,16 @@ const pool = mariardb.createPool({
     database: 'miniblog'
 });
 
+async function connect() {
+    try {
+        let conn = await pool.getConnection();
+        console.log('Connected to the database');
+        return conn;
+    } catch (err) {
+        console.log('Error connecting to the database ' + err);
+    }
+};
+
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
