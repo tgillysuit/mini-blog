@@ -35,15 +35,70 @@ app.get('/', (req, res) => {
 });
 
 app.post('/submit', async (req, res) => {
-    
+    //Vars
     const data = req.body;
     console.log(data);
-
     const conn = await connect();
+    //Functions
+    let validationBools = {
+        title: true, content: true, author: true,
+        check: function() {
+            if(this.title === true && this.content === true) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
 
-    await conn.query(`INSERT INTO posts (author, title, content)
-    VALUES ('${data.author}','${data.title}','${data.content}');
-    `);
+    }
+
+    let validationChecks = function(data, validationObject) {
+        
+        if(data.title.trim().length > 5) {
+            validationObject.title = false;
+        }
+        if(data.content.length > 0) {
+            validationObject.content = false;
+        }
+        if(data.author == "") {
+            validationObject.author = false;
+            data.author = null;
+        }
+
+    }
+
+    let localInsert = async function(connection) {
+        /*
+        Eventually, this will need to REALLY be sanitized. 
+        We could whitelist operations and sanitize inputs on the server-side.
+        My encapsulation will allow for this.
+        */
+        await connection.query(
+        `INSERT INTO posts (author, title, content)
+        VALUES ('${data.author}','${data.title}','${data.content}');
+        `);
+    }
+
+    let updateDB = function(connection, data, validationObject, insertFunction) {
+        validationChecks(data, validationObject);
+        
+        if(validationObject.check() === true) {
+            insertFunction(connection);
+        }
+        else {
+            if(!validationObject.title) {
+                console.log("Invalid Title");
+            }
+            if(!validationObject.content) {
+                console.log("Invalid Content");
+            }
+            return;
+        }
+    }
+    //Code
+
+    updateDB(conn, data, validationBools, localInsert);
 
     res.render('confirmation', { details: data });
 });
