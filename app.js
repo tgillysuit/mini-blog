@@ -1,11 +1,11 @@
 const express = require('express');
-const mariardb = require('mariadb');
+const mariadb = require('mariadb');
 const PORT = 3000;
 
-const pool = mariardb.createPool({
+const pool = mariadb.createPool({
     host: 'localhost',
     user: 'root',
-    password: '****', // Change your password for your database here.
+    password: '1695', // Change your password for your database here.
     database: 'miniblog'
 });
 
