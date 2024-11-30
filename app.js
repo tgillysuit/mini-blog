@@ -39,14 +39,24 @@ app.post('/submit', async (req, res) => {
     const data = req.body;
     console.log(data);
     const conn = await connect();
+    const errors = {
+        title: null,
+        content: null,
+    };
     //Functions
     let validationBools = {
         title: true, content: true, author: true,
-        check: function() {
+        check: function(errors) {
             if(this.title === true && this.content === true) {
                 return true;
             }
             else {
+                if(this.title === false) {
+                    errors.title = "Title must be a least six characters."
+                }
+                if(this.content === false) {
+                    errors.content = "Content cannot be empty."
+                }
                 return false;
             }
         }
@@ -61,7 +71,7 @@ app.post('/submit', async (req, res) => {
         if(data.content.length > 0) {
             validationObject.content = false;
         }
-        if(data.author == "") {
+        if(data.author.trim() == "") {
             validationObject.author = false;
             data.author = null;
         }
@@ -100,7 +110,7 @@ app.post('/submit', async (req, res) => {
 
     updateDB(conn, data, validationBools, localInsert);
 
-    res.render('confirmation', { details: data });
+    res.render('confirmation', { details: data, errors: errors });
 });
 
 app.get('/entries' , (req, res) => {
