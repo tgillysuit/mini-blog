@@ -14,8 +14,7 @@
                 <h2><%= data[i].title %></h2>
                 <p>Author: <%= data[i].author %></p>
                 <p><%= data[i].content %></p>
-                <!-- Timestamp will go here -->
-                 <p><%= data[i].timestamp.toString() %></p>
+                <p><%= data[i].created_at ? data[i].created_at.toString() : 'No timestamp available' %></p>
             </div>
             <hr>
         <% } %>
