@@ -5,7 +5,7 @@ const PORT = 3000;
 const pool = mariadb.createPool({
     host: 'localhost',
     user: 'root',
-    password: '1695', // Change your password for your database here.
+    password: '1234', // Change your password for your database here.
     database: 'miniblog'
 });
 
@@ -39,10 +39,7 @@ app.post('/submit', async (req, res) => {
     const data = req.body;
     console.log(data);
     const conn = await connect();
-    const errors = {
-        title: null,
-        content: null,
-    };
+    let errors = [];
     //Functions
     let validationBools = {
         title: true, content: true, author: true,
@@ -52,10 +49,10 @@ app.post('/submit', async (req, res) => {
             }
             else {
                 if(this.title === false) {
-                    errors.title = "Title must be a least six characters."
+                    errors.push("Title must be a least six characters.");
                 }
                 if(this.content === false) {
-                    errors.content = "Content cannot be empty."
+                    errors.push("Content cannot be empty.");
                 }
                 return false;
             }
@@ -65,10 +62,10 @@ app.post('/submit', async (req, res) => {
 
     let validationChecks = function(data, validationObject) {
         
-        if(data.title.trim().length > 5) {
+        if(data.title.trim().length <= 5) {
             validationObject.title = false;
         }
-        if(data.content.length > 0) {
+        if(data.content.length <= 0) {
             validationObject.content = false;
         }
         if(data.author.trim() == "") {
@@ -84,17 +81,21 @@ app.post('/submit', async (req, res) => {
         We could whitelist operations and sanitize inputs on the server-side.
         My encapsulation will allow for this.
         */
+       console.log(data);
+       let date = await connection.query(`SELECT Now() AS time;`);
+       console.log(date);
         await connection.query(
-        `INSERT INTO posts (author, title, content)
-        VALUES ('${data.author}','${data.title}','${data.content}');
+        `INSERT INTO posts (author, title, content, timestamp)
+        VALUES ('${data.author}','${data.title}','${data.content}','${date[0].time}');
         `);
     }
 
     let updateDB = function(connection, data, validationObject, insertFunction) {
         validationChecks(data, validationObject);
         
-        if(validationObject.check() === true) {
+        if(validationObject.check(errors) === true) {
             insertFunction(connection);
+            res.render('confirmation', { details: data, errors: [] });
         }
         else {
             if(!validationObject.title) {
@@ -103,17 +104,31 @@ app.post('/submit', async (req, res) => {
             if(!validationObject.content) {
                 console.log("Invalid Content");
             }
-            return;
+            res.render('home', { details: data, errors: [] });
         }
     }
     //Code
 
     updateDB(conn, data, validationBools, localInsert);
 
-    res.render('confirmation', { details: data, errors: errors });
+
 });
 
-app.get('/entries' , (req, res) => {
+app.get('/entries' , async (req, res) => {
+    const conn =  await connect();
+    function pullFromDB(connection) {
+        return connection.query(
+            `SELECT * FROM posts ORDER BY 'timestamp' DESC;`
+        );
+    }
+
+    let posts = await pullFromDB(conn);
+
+    console.log(posts)
+
+
+
+
     res.render('entries', { data: posts });
 });
 
